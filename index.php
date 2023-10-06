@@ -2,5 +2,7 @@
 require_once 'Matriz.php';
 
 // teste da matriz
-$a = new Matriz(3,3);
-var_dump($a);
+$matriz1 = new Matriz(1,2);
+$matriz2 = new Matriz(2,1);
+
+print_r(Matriz::somaMatriz($matriz1,$matriz2));
