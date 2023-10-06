@@ -1,11 +1,9 @@
 <?php
 
-use Matriz as GlobalMatriz;
-
-class Matriz {
+class Matrix {
     private $linhas, $colunas;
     private $data = [];
-    //criaçao da matriz
+
     public function __construct($linhas, $colunas)
     {
         $this->linhas = $linhas;
@@ -14,44 +12,54 @@ class Matriz {
         for ($i = 0; $i < $linhas; $i++) {
             $array = [];
             for ($j = 0; $j < $colunas; $j++) {
-                // teste com número randômico
                 $array[] = rand(0, 10000) / 10000;
             }
             $this->data[] = $array;
         }
     }
 
-    function customMap($data, $func) {
-        $result = array();
-    
-        for ($i = 0; $i < count($data); $i++) {
-            $subArray = array();
-            for ($j = 0; $j < count($data[$i]); $j++) {
-                $subArray[] = $func($data[$i][$j], $i, $j);
+    public function customMap($func) {
+        $result = [];
+
+        for ($i = 0; $i < $this->linhas; $i++) {
+            $subArray = [];
+            for ($j = 0; $j < $this->colunas; $j++) {
+                $subArray[] = $func($this->data[$i][$j], $i, $j);
             }
             $result[] = $subArray;
         }
-    
+
         return $result;
     }
 
-    // Soma de uma matriz com outra (bias)
     public static function somaMatriz($a, $b) {
-        $matriz = new Matriz($a->getLinhas(), $a->getColunas());
-        
-        $matriz->setData($matriz->customMap($a->getData(), function($num, $i, $j) use ($a, $b) {
+        $matriz = new Matrix($a->getLinhas(), $a->getColunas());
+
+        $matriz->setData($matriz->customMap(function($num, $i, $j) use ($a, $b) {
             $valorA = $a->getElemento($i, $j);
             $valorB = $b->getElemento($i, $j);
             return $valorA + $valorB;
         }));
-    
+
         return $matriz;
     }
 
-    public static function multiplicaMatriz(){
-        
+    public static function multiplicaMatriz($a, $b) {
+        $matrix = new Matrix($a->getLinhas(), $b->getColunas());
+
+        $matrix->setData($matrix->customMap(function($num, $i, $j) use ($a, $b) {
+            $sum = 0;
+            for ($k = 0; $k < $a->getColunas(); $k++) {
+                $elm1 = $a->getElemento($i, $k);
+                $elm2 = $b->getElemento($k, $j);
+                $sum += $elm1 * $elm2;
+            }
+
+            return $sum;
+        }));
+
+        return $matrix;
     }
-    
 
     public function getLinhas() {
         return $this->linhas;
@@ -77,5 +85,7 @@ class Matriz {
         $this->data = $data;
     }
 
+    public function getElemento($i, $j) {
+        return $this->data[$i][$j];
+    }
 }
-?>
